@@ -1,0 +1,9 @@
+git remote add upstream https://github.com/microsoft/vcpkg.git
+git fetch upstream
+git checkout master
+git merge upstream/master
+
+# log4cpp
+git fetch --progress "https://github.com/NancyLi1013/vcpkg.git" +dev/NancyLi/7408:refs/heads/dev/NancyLi/7408
+git checkout master
+git merge "dev/NancyLi/7408"
