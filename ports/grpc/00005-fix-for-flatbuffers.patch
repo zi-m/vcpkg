@@ -1,0 +1,13 @@
+diff --git a/include/grpcpp/impl/codegen/byte_buffer.h b/include/grpcpp/impl/codegen/byte_buffer.h
+index 7b82f49a84..3a2feedd0e 100644
+--- a/include/grpcpp/impl/codegen/byte_buffer.h
++++ b/include/grpcpp/impl/codegen/byte_buffer.h
+@@ -195,7 +195,7 @@ class ByteBuffer final {
+     }
+     buffer_ = buf;
+   }
+-
++public:
+   grpc_byte_buffer* c_buffer() { return buffer_; }
+   grpc_byte_buffer** c_buffer_ptr() { return &buffer_; }
+ 
