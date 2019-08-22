@@ -1,11 +1,3 @@
-if (VCPKG_TARGET_ARCHITECTURE STREQUAL "arm")
-  message(FATAL_ERROR "mp3lame does not support ARM")
-endif()
-
-if (VCPKG_CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
-  message(FATAL_ERROR "mp3lame does not support UWP")
-endif()
-
 include(vcpkg_common_functions)
 
 set(VERSION 3.100)
@@ -20,39 +12,58 @@ vcpkg_extract_source_archive_ex(
     OUT_SOURCE_PATH SOURCE_PATH
     ARCHIVE ${ARCHIVE_FILE}
     REF ${VERSION}
+    PATCHES 00001-msvc-upgrade-solution-up-to-vc11.patch
 )
 
-# template for mp3lameConfig.cmake
-file(INSTALL ${CMAKE_CURRENT_LIST_DIR}/Config.cmake.in DESTINATION ${SOURCE_PATH} RENAME vcpkg_Config.cmake.in)
-
 if(VCPKG_TARGET_IS_WINDOWS)
-    # use vc11 solution instead ov vc9
-    file(INSTALL ${CMAKE_CURRENT_LIST_DIR}/vc11 DESTINATION ${SOURCE_PATH} RENAME vcpkg_vc11)
 
-    # should use "#include <lame/lame.h>" instead of "#include <lame.h>"
-    file(INSTALL ${SOURCE_PATH}/include/lame.h DESTINATION ${SOURCE_PATH}/vcpkg_include/lame)
+	if(VCPKG_TARGET_ARCHITECTURE STREQUAL "arm64")
+		set(platform "ARM64")
+		set(machine "ARM64")
+	elseif(VCPKG_TARGET_ARCHITECTURE STREQUAL "arm")
+		set(platform "ARM")
+		set(machine "ARM")
+	elseif(VCPKG_TARGET_ARCHITECTURE STREQUAL "x64")
+		set(platform "x64")
+		set(machine "x64")
+	else()
+		set(platform "Win32")
+		set(machine "x86")
+	endif()
 
-    if (VCPKG_LIBRARY_LINKAGE STREQUAL dynamic)
-        # replace "<RuntimeLibrary>...</RuntimeLibrary>" to "<RuntimeLibrary>...DLL</RuntimeLibrary>" in vcxproj
-        file(GLOB vcxprojs ${SOURCE_PATH}/vcpkg_vc11/*.vcxproj)
-        foreach(vcxproj ${vcxprojs})
-            file(READ ${vcxproj} vcxproj_orig)
-            string(REPLACE "</RuntimeLibrary>" "DLL</RuntimeLibrary>" vcxproj_orig "${vcxproj_orig}")
-            file(WRITE ${vcxproj} "${vcxproj_orig}")
-        endforeach()
-    endif()
+	file(READ "${SOURCE_PATH}/vc_solution/vc11_lame.sln" sln_con)
+	string(REPLACE "|Win32" "|${platform}" sln_con "${sln_con}")
+	string(REPLACE "\"vc11_" "\"${machine}_vc11_" sln_con "${sln_con}")
+	file(WRITE "${SOURCE_PATH}/vc_solution/${machine}_vc11_lame.sln" "${sln_con}")
+
+    
+    file(GLOB vcxprojs RELATIVE "${SOURCE_PATH}/vc_solution" "${SOURCE_PATH}/vc_solution/vc11_*.vcxproj")
+    foreach(vcxproj ${vcxprojs})
+        file(READ "${SOURCE_PATH}/vc_solution/${vcxproj}" vcxproj_con)
+        
+        if(NOT VCPKG_LIBRARY_LINKAGE STREQUAL dynamic)
+            string(REPLACE "DLL</RuntimeLibrary>" "</RuntimeLibrary>" vcxproj_con "${vcxproj_con}")
+        endif()
+
+		string(REPLACE "/machine:x86" "/machine:${machine}" vcxproj_con "${vcxproj_con}")
+		string(REPLACE "<Platform>Win32</Platform>" "<Platform>${platform}</Platform>" vcxproj_con "${vcxproj_con}")
+		string(REPLACE "|Win32" "|${platform}" vcxproj_con "${vcxproj_con}")
+		string(REPLACE "Include=\"vc11_" "Include=\"${machine}_vc11_" vcxproj_con "${vcxproj_con}")
+ 
+        if(NOT VCPKG_CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+            string(REPLACE "/APPCONTAINER" "" vcxproj_con "${vcxproj_con}")
+        endif()
+        
+        file(WRITE "${SOURCE_PATH}/vc_solution/${machine}_${vcxproj}" "${vcxproj_con}")
+    endforeach()
 
     vcpkg_install_msbuild(
         SOURCE_PATH ${SOURCE_PATH}
-        PROJECT_SUBPATH "vcpkg_vc11/vc11_lame.sln"
+        PROJECT_SUBPATH "vc_solution/${machine}_vc11_lame.sln"
         TARGET "lame"
-        RELEASE_CONFIGURATION ${RELEASE_CONFIGURATION}
-        DEBUG_CONFIGURATION ${DEBUG_CONFIGURATION}
-        LICENSE_SUBPATH ${SOURCE_PATH_SUFFIX}/COPYING
-        INCLUDES_SUBPATH "vcpkg_include"
+        PLATFORM "${platform}"
     )
 
-    # remove redundant files
     if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
         if(NOT DEFINED VCPKG_BUILD_TYPE OR VCPKG_BUILD_TYPE STREQUAL "release")
             file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/bin)
@@ -102,7 +113,6 @@ else()
             LOGNAME install-${TARGET_TRIPLET}-dbg
         )
 
-        # remove redundant files
         file(REMOVE_RECURSE 
             ${CURRENT_PACKAGES_DIR}/debug/bin
             ${CURRENT_PACKAGES_DIR}/debug/include 
@@ -129,19 +139,14 @@ else()
         )
 
         if(VCPKG_LIBRARY_LINKAGE STREQUAL static)
-            # remove redundant files
             file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/bin)
         endif()
 
-        configure_file(${SOURCE_PATH}/COPYING ${CURRENT_PACKAGES_DIR}/share/mp3lame/copyright COPYONLY)
     endif()
 
 endif()
 
-configure_file(
-    ${SOURCE_PATH}/vcpkg_Config.cmake.in 
-    ${CURRENT_PACKAGES_DIR}/share/mp3lame/mp3lameConfig.cmake 
-    @ONLY
-)
-
+file(COPY ${SOURCE_PATH}/include/lame.h DESTINATION ${CURRENT_PACKAGES_DIR}/include/lame)
+configure_file(${SOURCE_PATH}/COPYING ${CURRENT_PACKAGES_DIR}/share/mp3lame/copyright COPYONLY)
+configure_file(${CMAKE_CURRENT_LIST_DIR}/Config.cmake.in ${CURRENT_PACKAGES_DIR}/share/mp3lame/mp3lame-config.cmake @ONLY)
 file(COPY ${CMAKE_CURRENT_LIST_DIR}/usage DESTINATION ${CURRENT_PACKAGES_DIR}/share/mp3lame)
