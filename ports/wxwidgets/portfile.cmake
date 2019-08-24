@@ -67,3 +67,6 @@ file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/lib/mswu)
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/lib/mswud)
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/include/msvc)
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/include)
+
+# Shamelessly stolen from plplot ("vcpkg/buildtrees/plplot/src/5.13.0-d50d469362/cmake/modules")
+file(COPY ${CMAKE_CURRENT_LIST_DIR}/FindwxWidgets.cmake DESTINATION ${CURRENT_PACKAGES_DIR}/share/wxwidgets)
