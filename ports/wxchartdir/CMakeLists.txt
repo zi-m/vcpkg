@@ -10,12 +10,12 @@ find_package(chartdir CONFIG REQUIRED)
 add_library(wxchartdir STATIC wxdemo/common/wxchartviewer.cpp)
 
 target_include_directories(wxchartdir PUBLIC
-	$<INSTALL_INTERFACE:include>
+    $<INSTALL_INTERFACE:include>
 )
 
 target_link_libraries(wxchartdir 
-	PRIVATE ${wxWidgets_LIBRARIES}
-	PRIVATE chartdir
+    PRIVATE ${wxWidgets_LIBRARIES}
+    PRIVATE chartdir
 )
 
 install(TARGETS wxchartdir EXPORT wxchartdir-config 
