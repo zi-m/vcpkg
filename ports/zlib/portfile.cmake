@@ -14,6 +14,7 @@ vcpkg_extract_source_archive_ex(
     REF ${VERSION}
     PATCHES
         "cmake_dont_build_more_than_needed.patch"
+        "00002-add-link-options-appcontainer.patch"
 )
 
 # This is generated during the cmake build
@@ -27,6 +28,7 @@ vcpkg_configure_cmake(
         -DSKIP_BUILD_EXAMPLES=ON
     OPTIONS_DEBUG
         -DSKIP_INSTALL_HEADERS=ON
+	GENERATOR "Ninja"
 )
 
 vcpkg_install_cmake()
