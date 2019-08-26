@@ -1,0 +1,19 @@
+diff --git a/include/flatbuffers/grpc.h b/include/flatbuffers/grpc.h
+index a75b67c..3d89153 100644
+--- a/include/flatbuffers/grpc.h
++++ b/include/flatbuffers/grpc.h
+@@ -285,6 +285,14 @@ template<class T> class SerializationTraits<flatbuffers::grpc::Message<T>> {
+   }
+ 
+   // Deserialize by pulling the
++  static grpc::Status Deserialize(ByteBuffer *buffer,
++    flatbuffers::grpc::Message<T> *msg) {
++    return Deserialize(buffer->c_buffer(), msg);
++  }
++  static grpc::Status Deserialize(ByteBuffer::ByteBufferPointer p,
++    flatbuffers::grpc::Message<T> *msg) {
++    return Deserialize((grpc_byte_buffer*)(p), msg);
++  }
+   static grpc::Status Deserialize(grpc_byte_buffer *buffer,
+                                   flatbuffers::grpc::Message<T> *msg) {
+     if (!buffer) {

@@ -12,6 +12,7 @@ vcpkg_from_github(
         ignore_use_of_cmake_toolchain_file.patch
         no-werror.patch
 		fix-uwp-build.patch
+		deserialize-byte-buffer.patch
 )
 
 set(OPTIONS)
