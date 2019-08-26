@@ -60,3 +60,17 @@ file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/lib/mswu)
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/lib/mswud)
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/include/msvc)
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/include)
+
+vcpkg_from_github(
+    OUT_SOURCE_PATH VCPKG_WX_FIND_SOURCE_PATH
+    REPO CaeruleusAqua/vcpkg-wx-find
+    REF 17993e942f677799b488a06ca659a8e46ff272c9
+    SHA512 0fe07d3669f115c9b6a761abd7743f87e67f24d1eae3f3abee4715fa4d6b76af0d1ea3a4bd82dbdbed430ae50295e1722615ce0ee7d46182125f5048185ee153
+    HEAD_REF master
+)
+
+file(COPY ${VCPKG_WX_FIND_SOURCE_PATH}/FindwxWidgets.cmake DESTINATION ${CURRENT_PACKAGES_DIR}/share/wxwidgets)
+configure_file(${VCPKG_WX_FIND_SOURCE_PATH}/LICENSE ${CURRENT_PACKAGES_DIR}/share/wxwidgets/FindwxWidgets.cmake-LICENSE COPYONLY)
+file(COPY ${VCPKG_WX_FIND_SOURCE_PATH}/FindwxWidgets.cmake DESTINATION ${CURRENT_PACKAGES_DIR}/share/wxwidgets)
+file(COPY ${CMAKE_ROOT}/Modules/FindPackageHandleStandardArgs.cmake DESTINATION ${CURRENT_PACKAGES_DIR}/share/wxwidgets)
+file(COPY ${CMAKE_ROOT}/Modules/FindPackageMessage.cmake DESTINATION ${CURRENT_PACKAGES_DIR}/share/wxwidgets)
