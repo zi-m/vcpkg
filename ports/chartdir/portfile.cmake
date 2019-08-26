@@ -89,6 +89,7 @@ endif()
 
 file(GLOB HEADERS "${SOURCE_PATH}/include/*.h")
 file(COPY ${HEADERS} DESTINATION ${CURRENT_PACKAGES_DIR}/include/chartdir)
+file(COPY ${CMAKE_CURRENT_LIST_DIR}/chartdir.h DESTINATION ${CURRENT_PACKAGES_DIR}/include)
 
 configure_file(${SOURCE_PATH}/LICENSE.TXT ${CURRENT_PACKAGES_DIR}/share/chartdir/copyright COPYONLY)
 configure_file(${CMAKE_CURRENT_LIST_DIR}/Config.cmake.in ${CURRENT_PACKAGES_DIR}/share/chartdir/chartdir-config.cmake @ONLY)
