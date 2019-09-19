@@ -35,3 +35,9 @@ endif()
 vcpkg_copy_tool_dependencies(${CURRENT_PACKAGES_DIR}/tools/${PORT})
 
 file(INSTALL ${SOURCE_PATH}/README/LICENSE.md DESTINATION ${CURRENT_PACKAGES_DIR}/share/tidy-html5 RENAME copyright)
+
+set(TIDY_HTML5_REL_LIB "tidys.lib")
+set(TIDY_HTML5_DBG_LIB "tidysd.lib")
+
+configure_file(${CMAKE_CURRENT_LIST_DIR}/Config.cmake.in ${CURRENT_PACKAGES_DIR}/share/tidy-html5/tidy-html5-config.cmake @ONLY)
+file(COPY ${CMAKE_CURRENT_LIST_DIR}/usage DESTINATION ${CURRENT_PACKAGES_DIR}/share/tidy-html5)

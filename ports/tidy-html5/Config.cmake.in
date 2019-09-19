@@ -1,0 +1,32 @@
+
+get_filename_component(_tidy_html5_root "${CMAKE_CURRENT_LIST_FILE}" PATH)
+get_filename_component(_tidy_html5_root "${_tidy_html5_root}" PATH)
+get_filename_component(_tidy_html5_root "${_tidy_html5_root}" PATH)
+
+set(_tidy_html5_rel_lib "${_tidy_html5_root}/lib/@TIDY_HTML5_REL_LIB@")
+set(_tidy_html5_dbg_lib "${_tidy_html5_root}/debug/lib/@TIDY_HTML5_DBG_LIB@")
+
+if (EXISTS "${_tidy_html5_rel_lib}" OR EXISTS "${_tidy_html5_dbg_lib}")
+
+    add_library(tidy-html5 UNKNOWN IMPORTED)
+    set_target_properties(tidy-html5 PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${_tidy_html5_root}/include")
+
+    if (EXISTS "${_tidy_html5_rel_lib}")
+        set_target_properties(tidy-html5 PROPERTIES IMPORTED_LOCATION_RELEASE "${_tidy_html5_rel_lib}")
+        set_property(TARGET tidy-html5 APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+    endif()
+    if (EXISTS "${_tidy_html5_dbg_lib}")
+        set_target_properties(tidy-html5 PROPERTIES IMPORTED_LOCATION_DEBUG "${_tidy_html5_dbg_lib}")
+        set_property(TARGET tidy-html5 APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+    endif()
+
+else()
+
+    set(tidy_html5_FOUND FALSE)
+
+endif()
+
+unset(_tidy_html5_rel_lib)
+unset(_tidy_html5_dbg_lib)
+
+unset(_tidy_html5_root)

@@ -1,0 +1,4 @@
+The package tidy_html5 provides CMake targets:
+
+    find_package(tidy-html5 CONFIG REQUIRED)
+    target_link_libraries(main PRIVATE tidy-html5)
