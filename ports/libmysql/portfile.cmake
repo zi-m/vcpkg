@@ -96,6 +96,8 @@ if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
         ${CURRENT_PACKAGES_DIR}/debug/lib/libmysql.lib
         ${CURRENT_PACKAGES_DIR}/debug/lib/libmysql.dll
         ${CURRENT_PACKAGES_DIR}/debug/lib/libmysql.pdb)
+
+    set(LIBMYSQL_LIB "mysqlclient.lib")
 else()
     file(REMOVE
         ${CURRENT_PACKAGES_DIR}/lib/mysqlclient.lib
@@ -113,6 +115,8 @@ else()
         file (RENAME ${CURRENT_PACKAGES_DIR}/debug/lib/libmysql.dll ${CURRENT_PACKAGES_DIR}/debug/bin/libmysql.dll)
         file (RENAME ${CURRENT_PACKAGES_DIR}/debug/lib/libmysql.pdb ${CURRENT_PACKAGES_DIR}/debug/bin/libmysql.pdb)
     endif()
+
+    set(LIBMYSQL_LIB "libmysql.lib")
 endif()
 
 file(READ ${CURRENT_PACKAGES_DIR}/include/mysql/mysql_com.h _contents)
@@ -122,3 +126,6 @@ file(WRITE ${CURRENT_PACKAGES_DIR}/include/mysql/mysql_com.h "${_contents}")
 # copy license
 file(COPY ${SOURCE_PATH}/LICENSE DESTINATION ${CURRENT_PACKAGES_DIR}/share/libmysql)
 file(RENAME ${CURRENT_PACKAGES_DIR}/share/libmysql/LICENSE ${CURRENT_PACKAGES_DIR}/share/libmysql/copyright)
+
+configure_file(${CMAKE_CURRENT_LIST_DIR}/Config.cmake.in ${CURRENT_PACKAGES_DIR}/share/libmysql/libmysql-config.cmake @ONLY)
+file(COPY ${CMAKE_CURRENT_LIST_DIR}/usage DESTINATION ${CURRENT_PACKAGES_DIR}/share/libmysql)
