@@ -13,6 +13,7 @@ vcpkg_from_github(
         no-werror.patch
 		fix-uwp-build.patch
 		deserialize-byte-buffer.patch
+		fix-grpc-generated.patch
 )
 
 set(OPTIONS)

@@ -1,0 +1,27 @@
+diff --git a/grpc/src/compiler/cpp_generator.cc b/grpc/src/compiler/cpp_generator.cc
+index 6cfd22e..8d394c2 100644
+--- a/grpc/src/compiler/cpp_generator.cc
++++ b/grpc/src/compiler/cpp_generator.cc
+@@ -151,16 +151,15 @@ grpc::string GetHeaderIncludes(grpc_generator::File *file,
+         "grpc++/impl/codegen/rpc_method.h",
+         "grpc++/impl/codegen/service_type.h",
+         "grpc++/impl/codegen/status.h",
++        "grpc++/impl/codegen/client_context.h",
++        "grpc++/impl/codegen/server_context.h",
++        "grpc++/impl/codegen/completion_queue.h",
+         "grpc++/impl/codegen/stub_options.h",
+         "grpc++/impl/codegen/sync_stream.h"};
+     std::vector<grpc::string> headers(headers_strs, array_end(headers_strs));
+     PrintIncludes(printer.get(), headers, params);
+     printer->Print(vars, "\n");
+     printer->Print(vars, "namespace grpc {\n");
+-    printer->Print(vars, "class CompletionQueue;\n");
+-    printer->Print(vars, "class Channel;\n");
+-    printer->Print(vars, "class ServerCompletionQueue;\n");
+-    printer->Print(vars, "class ServerContext;\n");
+     printer->Print(vars, "}  // namespace grpc\n\n");
+ 
+     if (!file->package().empty()) {
+
+warning: LF will be replaced by CRLF in grpc/src/compiler/cpp_generator.cc.
+The file will have its original line endings in your working directory
