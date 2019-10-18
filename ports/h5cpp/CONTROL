@@ -1,0 +1,5 @@
+Source: h5cpp
+Version: 2019-10-17
+Homepage: http://h5cpp.org/
+Description: Easy to use HDF5 C++ templates for Serial and Paralell HDF5.
+Build-Depends: hdf5
