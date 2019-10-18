@@ -8,22 +8,16 @@ vcpkg_from_github(
     HEAD_REF master
 )
 
-vcpkg_configure_cmake(
-    SOURCE_PATH ${SOURCE_PATH}
-    PREFER_NINJA
-    OPTIONS
-        -DH5CPP_BUILD_TESTS=OFF
+file(COPY ${SOURCE_PATH}/h5cpp DESTINATION ${CURRENT_PACKAGES_DIR}/include)
+
+configure_file(
+    ${CMAKE_CURRENT_LIST_DIR}/Config.cmake.in 
+    ${CURRENT_PACKAGES_DIR}/share/h5cpp/h5cpp-config.cmake 
+    @ONLY
 )
 
-vcpkg_install_cmake()
-vcpkg_copy_pdbs()
-
-file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/include)
-file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/lib)
-file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/share)
-file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/lib)
-file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/share)
-
-vcpkg_fixup_cmake_targets(CONFIG_PATH share/cmake/h5cpp)
-
-message(FATAL_ERROR "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+configure_file(${SOURCE_PATH}/COPYRIGHT ${CURRENT_PACKAGES_DIR}/share/h5cpp/copyright COPYONLY)
+file(COPY ${SOURCE_PATH}/LICENCE.H5CPP DESTINATION ${CURRENT_PACKAGES_DIR}/share/h5cpp)
+file(COPY ${SOURCE_PATH}/LICENSE.HDF5 DESTINATION ${CURRENT_PACKAGES_DIR}/share/h5cpp)
+file(COPY ${SOURCE_PATH}/LICENSE.HDF5_LBNL DESTINATION ${CURRENT_PACKAGES_DIR}/share/h5cpp)
+file(COPY ${SOURCE_PATH}/LICENSE.LLVM DESTINATION ${CURRENT_PACKAGES_DIR}/share/h5cpp)

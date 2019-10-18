@@ -1,0 +1,10 @@
+
+get_filename_component(_h5cpp_root "${CMAKE_CURRENT_LIST_FILE}" PATH)
+get_filename_component(_h5cpp_root "${_h5cpp_root}" PATH)
+get_filename_component(_h5cpp_root "${_h5cpp_root}" PATH)
+
+add_library(h5cpp INTERFACE IMPORTED)
+set_target_properties(h5cpp 
+	PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${_h5cpp_root}/include")
+
+unset(_h5cpp_root)
