@@ -1,0 +1,45 @@
+diff --git a/Tools/MaterialEditor/MaterialEditor/src/wxOgre.cpp b/Tools/MaterialEditor/MaterialEditor/src/wxOgre.cpp
+index 3a0c9982d..af47f3b38 100644
+--- a/Tools/MaterialEditor/MaterialEditor/src/wxOgre.cpp
++++ b/Tools/MaterialEditor/MaterialEditor/src/wxOgre.cpp
+@@ -4,6 +4,7 @@
+ #include <gdk/gdk.h>
+ #include <gtk/gtk.h> // just this should suffice as it should include gdk.h itself
+ #endif
++#include <OGRE/Bites/OgreBitesConfigDialog.h>
+ 
+ // Required for the timer
+ const long ID_RENDERTIMER = wxNewId();
+@@ -67,7 +68,7 @@ void wxOgre::createOgreRenderWindow(Ogre::RenderSystem* renderSystem)
+         if(!mRoot->restoreConfig())
+         {
+             // That failed so we have to show the Dialog
+-            if(!mRoot->showConfigDialog())
++            if(!mRoot->showConfigDialog(OgreBites::getNativeConfigDialog()))
+             {
+                 // If the user canceled that there's nothing else we can do!
+                 OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, "No RenderSystem chosen", "wxOgre::createOgreRenderWindow");
+@@ -153,6 +154,7 @@ void wxOgre::toggleTimerRendering()
+ 
+ wxOgre::~wxOgre()
+ {
++    mTimer.Stop();
+     // destroy Viewport and RenderWindow
+     if (mViewPort)
+     {
+@@ -161,6 +163,7 @@ wxOgre::~wxOgre()
+     }
+ 
+     Ogre::Root::getSingleton().detachRenderTarget(mRenderWindow);
++    delete mRenderWindow;
+     mRenderWindow = 0;
+         delete mRoot;
+ 
+@@ -168,6 +171,7 @@ wxOgre::~wxOgre()
+ 
+ void wxOgre::OnSize(wxSizeEvent& event)
+ {
++	if(!mRenderWindow) return;
+     // Setting new size;
+     int width;
+     int height;

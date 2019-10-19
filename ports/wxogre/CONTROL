@@ -1,0 +1,5 @@
+Source: wxogre
+Version: 2019-10-08
+Build-Depends: wxwidgets, ogre
+Homepage: http://wiki.ogre3d.org/wxWidgets
+Description: A simple rendering widget for wxWindows (OGRE V1.x).
