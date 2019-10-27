@@ -53,7 +53,7 @@ index 07774c97..27692631 100644
          PATTERN test EXCLUDE)
 +install(EXPORT quickfix-config DESTINATION share/cmake/quickfix)
 diff --git a/src/C++/Utility.h b/src/C++/Utility.h
-index 0aa2cd3e..2829e110 100644
+index 0aa2cd3e..65f5765b 100644
 --- a/src/C++/Utility.h
 +++ b/src/C++/Utility.h
 @@ -242,4 +242,10 @@ using std::strtol;
@@ -61,7 +61,7 @@ index 0aa2cd3e..2829e110 100644
  #endif
  
 +#ifdef __cpp_noexcept_function_type
-+#define QUICKFIX_THROW(...) noexcept(false)
++#define QUICKFIX_THROW(...)
 +#else
 +#define QUICKFIX_THROW(...) throw(__VA_ARGS__)
 +#endif
