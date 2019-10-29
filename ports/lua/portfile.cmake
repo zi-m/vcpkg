@@ -52,3 +52,6 @@ vcpkg_copy_tool_dependencies(${CURRENT_PACKAGES_DIR}/tools/lua)
 # Handle copyright
 file(COPY ${CMAKE_CURRENT_LIST_DIR}/COPYRIGHT DESTINATION ${CURRENT_PACKAGES_DIR}/share/lua/copyright)
 vcpkg_copy_pdbs()
+
+configure_file(${CMAKE_CURRENT_LIST_DIR}/Config.cmake.in ${CURRENT_PACKAGES_DIR}/share/lua/lua-config.cmake @ONLY)
+file(COPY ${CMAKE_CURRENT_LIST_DIR}/usage DESTINATION ${CURRENT_PACKAGES_DIR}/share/lua)
