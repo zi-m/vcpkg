@@ -1,0 +1,5 @@
+Source: zi-hdf5plugin-zstandard
+Version: 2020-04-15
+Build-Depends: hdf5, zstd
+Homepage: https://github.com/zi-m/HDF5Plugin-Zstandard
+Description: An implementation of Zstandard compression filter plugin for HDF5 with the assigned filter code 32015.
