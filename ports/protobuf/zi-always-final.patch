@@ -1,0 +1,13 @@
+diff --git a/src/google/protobuf/compiler/cpp/cpp_message.cc b/src/google/protobuf/compiler/cpp/cpp_message.cc
+index 61a239574..388e94c99 100644
+--- a/src/google/protobuf/compiler/cpp/cpp_message.cc
++++ b/src/google/protobuf/compiler/cpp/cpp_message.cc
+@@ -1012,7 +1012,7 @@ void MessageGenerator::GenerateFieldAccessorDefinitions(io::Printer* printer) {
+ void MessageGenerator::GenerateClassDefinition(io::Printer* printer) {
+   Formatter format(printer, variables_);
+   format.Set("class_final", ShouldMarkClassAsFinal(descriptor_, options_)
+-                                ? "PROTOBUF_FINAL"
++                                ? "final"
+                                 : "");
+ 
+   if (IsMapEntryMessage(descriptor_)) {

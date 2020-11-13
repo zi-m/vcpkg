@@ -8,6 +8,7 @@ vcpkg_from_github(
         fix-uwp.patch
         fix-android-log.patch
         fix-static-build.patch
+        zi-always-final.patch
 )
 
 if(CMAKE_HOST_WIN32 AND NOT VCPKG_TARGET_ARCHITECTURE MATCHES "x64" AND NOT VCPKG_TARGET_ARCHITECTURE MATCHES "x86")
