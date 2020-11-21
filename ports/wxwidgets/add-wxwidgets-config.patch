@@ -1,0 +1,177 @@
+diff --git a/build/cmake/functions.cmake b/build/cmake/functions.cmake
+index 9f6f440c80..a7d83ed185 100644
+--- a/build/cmake/functions.cmake
++++ b/build/cmake/functions.cmake
+@@ -77,10 +77,21 @@ endmacro()
+ function(wx_set_common_target_properties target_name)
+     cmake_parse_arguments(wxCOMMON_TARGET_PROPS "DEFAULT_WARNINGS" "" "" ${ARGN})
+ 
++    # REASON: We need $<INSTALL_INTERFACE:include> for wxwidgets-config.cmake.
++    target_include_directories(${target_name}
++        BEFORE
++        PRIVATE
++            ${wxSETUP_HEADER_PATH}
++            ${wxSOURCE_DIR}/include
++        PUBLIC
++            $<INSTALL_INTERFACE:include>
++        )
++
+     set_target_properties(${target_name} PROPERTIES
+         LIBRARY_OUTPUT_DIRECTORY "${wxOUTPUT_DIR}${wxPLATFORM_LIB_DIR}"
+         ARCHIVE_OUTPUT_DIRECTORY "${wxOUTPUT_DIR}${wxPLATFORM_LIB_DIR}"
+-        RUNTIME_OUTPUT_DIRECTORY "${wxOUTPUT_DIR}${wxPLATFORM_LIB_DIR}"
++        # REASON: We install *.dll files into bin folder in vcpkg.
++        RUNTIME_OUTPUT_DIRECTORY "${wxBINARY_DIR}/bin${wxPLATFORM_LIB_DIR}"
+         )
+ 
+     if(MSVC)
+@@ -228,14 +239,16 @@ function(wx_set_target_properties target_name is_base)
+ 
+     target_include_directories(${target_name}
+         BEFORE
+-        PUBLIC
++        # REASON: Only $<INSTALL_INTERFACE:include> is PUBLIC.
++        PRIVATE
+             ${wxSETUP_HEADER_PATH}
+             ${wxSOURCE_DIR}/include
+         )
+ 
+     if(wxTOOLKIT_INCLUDE_DIRS)
+         target_include_directories(${target_name}
+-            PUBLIC ${wxTOOLKIT_INCLUDE_DIRS})
++            # REASON: Only $<INSTALL_INTERFACE:include> is PUBLIC.
++            PRIVATE ${wxTOOLKIT_INCLUDE_DIRS})
+     endif()
+ 
+     if (WIN32)
+@@ -279,7 +292,8 @@ function(wx_set_target_properties target_name is_base)
+             target_compile_definitions(${target_name} PRIVATE DLL_EXPORTS WXMAKINGDLL_${target_name_upper})
+         endif()
+         if(NOT target_name_short STREQUAL "base")
+-            target_compile_definitions(${target_name} PRIVATE WXUSINGDLL)
++            # REASON: We avoid explicit definition WXUSINGDLL for 'target_link_libraries(.. wxcore ..)'.
++            target_compile_definitions(${target_name} PUBLIC WXUSINGDLL)
+         endif()
+     endif()
+ 
+@@ -343,10 +357,12 @@ macro(wx_add_library name)
+         set_property(TARGET ${name} PROPERTY PROJECT_LABEL ${name_short})
+ 
+         # Setup install
+-        wx_install(TARGETS ${name}
++        # REASON: We export wxwidgets-config.cmake.
++        wx_install(TARGETS ${name} EXPORT wxwidgets-config
+             LIBRARY DESTINATION "lib${wxPLATFORM_LIB_DIR}"
+             ARCHIVE DESTINATION "lib${wxPLATFORM_LIB_DIR}"
+-            RUNTIME DESTINATION "lib${wxPLATFORM_LIB_DIR}"
++            # REASON: We install *.dll files into bin folder in vcpkg.
++            RUNTIME DESTINATION "bin${wxPLATFORM_LIB_DIR}"
+             BUNDLE DESTINATION Applications/wxWidgets
+             )
+     endif()
+@@ -492,7 +508,8 @@ function(wx_set_builtin_target_properties target_name)
+ 
+     target_include_directories(${target_name}
+         BEFORE
+-        PUBLIC
++        # REASON: Only $<INSTALL_INTERFACE:include> is PUBLIC.
++        PRIVATE
+             ${wxSETUP_HEADER_PATH}
+         )
+ 
+@@ -500,7 +517,8 @@ function(wx_set_builtin_target_properties target_name)
+ 
+     wx_set_common_target_properties(${target_name} DEFAULT_WARNINGS)
+     if(NOT wxBUILD_SHARED)
+-        wx_install(TARGETS ${name} ARCHIVE DESTINATION "lib${wxPLATFORM_LIB_DIR}")
++        # REASON: We export wxwidgets-config.cmake.
++        wx_install(TARGETS ${name} EXPORT wxwidgets-config ARCHIVE DESTINATION "lib${wxPLATFORM_LIB_DIR}")
+     endif()
+ endfunction()
+ 
+diff --git a/build/cmake/lib/CMakeLists.txt b/build/cmake/lib/CMakeLists.txt
+index cf40472c45..4f42c1b07e 100644
+--- a/build/cmake/lib/CMakeLists.txt
++++ b/build/cmake/lib/CMakeLists.txt
+@@ -102,5 +102,8 @@ if(wxBUILD_MONOLITHIC)
+     wx_finalize_lib(wxmono)
+ endif()
+ 
++# REASON: We can just use 'find_package(wxwidgets CONFIG REQUIRED)' now.
++wx_install(EXPORT wxwidgets-config DESTINATION share/cmake/wxwidgets)
++
+ # Propagate variable(s) to parent scope
+ set(wxLIB_TARGETS ${wxLIB_TARGETS} PARENT_SCOPE)
+diff --git a/build/cmake/main.cmake b/build/cmake/main.cmake
+index c038bbb387..e5f161217b 100644
+--- a/build/cmake/main.cmake
++++ b/build/cmake/main.cmake
+@@ -14,7 +14,11 @@ include(build/cmake/functions.cmake)        # wxWidgets functions
+ include(build/cmake/toolkit.cmake)          # Platform/toolkit settings
+ include(build/cmake/options.cmake)          # User options
+ include(build/cmake/init.cmake)             # Init various global build vars
+-include(build/cmake/install.cmake)          # Install target support
++
++# REASON: We simplify headers-installation according to vcpkg package structure.
++wx_install(DIRECTORY "${wxSOURCE_DIR}/include/wx" DESTINATION "include")
++wx_install(DIRECTORY "${wxSETUP_HEADER_PATH}/wx" DESTINATION "include")
++# include(build/cmake/install.cmake)          # Install target support
+ 
+ add_subdirectory(build/cmake/lib libs)
+ add_subdirectory(build/cmake/utils utils)
+@@ -37,10 +41,11 @@ if(NOT wxBUILD_CUSTOM_SETUP_HEADER_PATH)
+     include(build/cmake/setup.cmake)
+ endif()
+ 
+-if(NOT MSVC)
+-    # Write wx-config
+-    include(build/cmake/config.cmake)
+-endif()
++# REASON: We don't need 'wx-config' in vcpkg.
++# if(NOT MSVC)
++#     # Write wx-config
++#     include(build/cmake/config.cmake)
++# endif()
+ 
+ # Determine minimum required OS at runtime
+ set(wxREQUIRED_OS_DESC "${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR}")
+diff --git a/build/cmake/utils/CMakeLists.txt b/build/cmake/utils/CMakeLists.txt
+index 4108d6a723..bc5489885e 100644
+--- a/build/cmake/utils/CMakeLists.txt
++++ b/build/cmake/utils/CMakeLists.txt
+@@ -31,20 +31,21 @@ if(wxUSE_XRC)
+         set(EXE_SUFFIX ${CMAKE_EXECUTABLE_SUFFIX})
+     endif()
+ 
+-    if(NOT MSVC)
+-        install(CODE "execute_process( \
+-            COMMAND ${CMAKE_COMMAND} -E rename \
+-            ${CMAKE_INSTALL_PREFIX}/bin/wxrc${EXE_SUFFIX} \
+-            ${CMAKE_INSTALL_PREFIX}/bin/wxrc-${wxMAJOR_VERSION}.${wxMINOR_VERSION}${EXE_SUFFIX} \
+-            )"
+-        )
+-        install(CODE "execute_process( \
+-            COMMAND ${CMAKE_COMMAND} -E create_symlink \
+-            ${CMAKE_INSTALL_PREFIX}/bin/wxrc-${wxMAJOR_VERSION}.${wxMINOR_VERSION}${EXE_SUFFIX} \
+-            ${CMAKE_INSTALL_PREFIX}/bin/wxrc${EXE_SUFFIX} \
+-            )"
+-        )
+-    endif()
++    # REASON: We don't need version-suffix for 'wxrc' in vcpkg.
++    # if(NOT MSVC)
++    #     install(CODE "execute_process( \
++    #         COMMAND ${CMAKE_COMMAND} -E rename \
++    #         ${CMAKE_INSTALL_PREFIX}/bin/wxrc${EXE_SUFFIX} \
++    #         ${CMAKE_INSTALL_PREFIX}/bin/wxrc-${wxMAJOR_VERSION}.${wxMINOR_VERSION}${EXE_SUFFIX} \
++    #         )"
++    #     )
++    #     install(CODE "execute_process( \
++    #         COMMAND ${CMAKE_COMMAND} -E create_symlink \
++    #         ${CMAKE_INSTALL_PREFIX}/bin/wxrc-${wxMAJOR_VERSION}.${wxMINOR_VERSION}${EXE_SUFFIX} \
++    #         ${CMAKE_INSTALL_PREFIX}/bin/wxrc${EXE_SUFFIX} \
++    #         )"
++    #     )
++    # endif()
+ endif()
+ 
+ # TODO: build targets for other utils
