@@ -18,6 +18,7 @@ vcpkg_from_github(
         00010-add-feature-absl-sync.patch
         00011-fix-csharp_plugin.patch
         snprintf.patch
+        00012-fix-use-cxx17.patch
         00009-fix-for-flatbuffers.patch
 )
 
