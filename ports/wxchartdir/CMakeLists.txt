@@ -1,10 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 project(wxchartdir CXX)
 
-set(wxWidgets_EXCLUDE_COMMON_LIBRARIES TRUE)
-find_package(wxWidgets REQUIRED COMPONENTS core base)
-include(${wxWidgets_USE_FILE})
-
+find_package(wxwidgets CONFIG REQUIRED)
 find_package(chartdir CONFIG REQUIRED)
 
 add_library(wxchartdir STATIC wxdemo/common/wxchartviewer.cpp)
@@ -14,7 +11,7 @@ target_include_directories(wxchartdir PUBLIC
 )
 
 target_link_libraries(wxchartdir 
-    PRIVATE ${wxWidgets_LIBRARIES}
+    PRIVATE wxbase wxcore
     PRIVATE chartdir
 )
 
