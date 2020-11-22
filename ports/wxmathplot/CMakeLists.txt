@@ -3,9 +3,7 @@ project(wxmathplot CXX)
 
 option(BUILD_SHARED_LIBS "Build shared instead of static library" ON)
 
-set(wxWidgets_EXCLUDE_COMMON_LIBRARIES TRUE)
-find_package(wxWidgets REQUIRED COMPONENTS core base)
-include(${wxWidgets_USE_FILE})
+find_package(wxwidgets CONFIG REQUIRED)
 
 if(BUILD_SHARED_LIBS)
 	add_library(wxmathplot SHARED mathplot.cpp mathplot.h)
@@ -19,7 +17,7 @@ target_include_directories(wxmathplot PUBLIC
 )
 
 target_link_libraries(wxmathplot PRIVATE 
-	${wxWidgets_LIBRARIES}
+	wxbase wxcore
 )
 
 install(TARGETS wxmathplot EXPORT wxmathplot-config 
