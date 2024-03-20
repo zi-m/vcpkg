@@ -1,0 +1,37 @@
+
+get_filename_component(_mailio_root "${CMAKE_CURRENT_LIST_FILE}" PATH)
+get_filename_component(_mailio_root "${_mailio_root}" PATH)
+get_filename_component(_mailio_root "${_mailio_root}" PATH)
+
+set(_mailio_rel_lib "${_mailio_root}/lib/mailio.lib")
+set(_mailio_dbg_lib "${_mailio_root}/debug/lib/mailio.lib")
+
+if (NOT WIN32)
+    set(_mailio_rel_lib "${_mailio_root}/lib/mailio.a")
+    set(_mailio_dbg_lib "${_mailio_root}/debug/lib/mailio.a")
+endif ()
+
+if (EXISTS "${_mailio_rel_lib}" OR EXISTS "${_mailio_dbg_lib}")
+
+    add_library(mailio UNKNOWN IMPORTED)
+    set_target_properties(mailio PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${_mailio_root}/include")
+
+    if (EXISTS "${_mailio_rel_lib}")
+        set_target_properties(mailio PROPERTIES IMPORTED_LOCATION_RELEASE "${_mailio_rel_lib}")
+        set_property(TARGET mailio APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+    endif()
+    if (EXISTS "${_mailio_dbg_lib}")
+        set_target_properties(mailio PROPERTIES IMPORTED_LOCATION_DEBUG "${_mailio_dbg_lib}")
+        set_property(TARGET mailio APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+    endif()
+
+else()
+
+    set(mailio_FOUND FALSE)
+
+endif()
+
+unset(_mailio_rel_lib)
+unset(_mailio_dbg_lib)
+
+unset(_mailio_root)

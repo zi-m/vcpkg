@@ -13,6 +13,7 @@ vcpkg_from_github(
         gtk3-link-libraries.patch
         sdl2.patch
         fix-glegl.patch
+        zi-save-load-perspective.patch # https://forums.wxwidgets.org/viewtopic.php?t=21868
 )
 
 vcpkg_check_features(

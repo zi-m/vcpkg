@@ -1,0 +1,21 @@
+
+get_filename_component(_libmysql_root "${CMAKE_CURRENT_LIST_FILE}" PATH)
+get_filename_component(_libmysql_root "${_libmysql_root}" PATH)
+get_filename_component(_libmysql_root "${_libmysql_root}" PATH)
+
+set(_libmysql_lib "${_libmysql_root}/lib/@LIBMYSQL_LIB@")
+if (EXISTS "${_libmysql_lib}")
+
+    add_library(libmysql UNKNOWN IMPORTED)
+    set_target_properties(libmysql PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${_libmysql_root}/include")
+    set_target_properties(libmysql PROPERTIES IMPORTED_LOCATION "${_libmysql_lib}")
+    set_property(TARGET libmysql APPEND PROPERTY IMPORTED_CONFIGURATIONS)
+
+else()
+
+    set(libmysql_FOUND FALSE)
+
+endif()
+unset(_libmysql_lib)
+
+unset(_libmysql_root)

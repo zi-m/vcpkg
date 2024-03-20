@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 46dc180..594102f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -134,7 +134,7 @@ target_sources(yaml-cpp
+     ${yaml-cpp-sources})
+ 
+ if (NOT DEFINED CMAKE_DEBUG_POSTFIX)
+-  set(CMAKE_DEBUG_POSTFIX "d")
++  set(CMAKE_DEBUG_POSTFIX "")
+ endif()
+ 
+ set_target_properties(yaml-cpp PROPERTIES

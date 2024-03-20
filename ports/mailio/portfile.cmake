@@ -21,6 +21,10 @@ vcpkg_cmake_config_fixup(
 
 vcpkg_fixup_pkgconfig()
 
+vcpkg_copy_pdbs()
+configure_file(${CMAKE_CURRENT_LIST_DIR}/zi-config.cmake.in ${CURRENT_PACKAGES_DIR}/share/mailio/mailio-config.cmake @ONLY)
+configure_file(${CMAKE_CURRENT_LIST_DIR}/zi-usage ${CURRENT_PACKAGES_DIR}/share/mailio/usage COPYONLY)
+
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/share")
 file(INSTALL "${SOURCE_PATH}/LICENSE" DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}" RENAME copyright)

@@ -10,6 +10,7 @@ vcpkg_from_github(
         fix-static-build.patch
         fix-default-proto-file-path.patch
         compile_options.patch
+        zi-protobuf_generate-include_systems.patch
 )
 
 string(COMPARE EQUAL "${TARGET_TRIPLET}" "${HOST_TRIPLET}" protobuf_BUILD_PROTOC_BINARIES)

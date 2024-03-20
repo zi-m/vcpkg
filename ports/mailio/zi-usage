@@ -1,0 +1,4 @@
+The package mailio provides CMake targets:
+
+    find_package(mailio CONFIG REQUIRED)
+    target_link_libraries(main PRIVATE mailio)
