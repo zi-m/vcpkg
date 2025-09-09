@@ -1,0 +1,19 @@
+
+get_filename_component(_lua_root "${CMAKE_CURRENT_LIST_FILE}" PATH)
+get_filename_component(_lua_root "${_lua_root}" PATH)
+get_filename_component(_lua_root "${_lua_root}" PATH)
+
+if (EXISTS "${_lua_root}/lib/lua.lib")
+
+    add_library(lua UNKNOWN IMPORTED)
+    set_target_properties(lua PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${_lua_root}/include")
+    set_target_properties(lua PROPERTIES IMPORTED_LOCATION "${_lua_root}/lib/lua.lib")
+    set_property(TARGET lua APPEND PROPERTY IMPORTED_CONFIGURATIONS)
+
+else()
+
+    set(lua_FOUND FALSE)
+
+endif()
+
+unset(_lua_root)

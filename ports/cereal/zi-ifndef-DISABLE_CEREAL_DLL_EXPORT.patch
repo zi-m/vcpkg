@@ -1,0 +1,36 @@
+diff --git a/include/cereal/details/static_object.hpp b/include/cereal/details/static_object.hpp
+index 10f72737..30773ba2 100644
+--- a/include/cereal/details/static_object.hpp
++++ b/include/cereal/details/static_object.hpp
+@@ -44,6 +44,7 @@
+     License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
+     http://www.boost.org/LICENSE_1_0.txt) */
+ 
++#ifndef DISABLE_CEREAL_DLL_EXPORT
+ #if defined(_MSC_VER) && !defined(__clang__)
+ #   define CEREAL_DLL_EXPORT __declspec(dllexport)
+ #   define CEREAL_USED
+@@ -51,6 +52,10 @@
+ #   define CEREAL_DLL_EXPORT __attribute__ ((visibility("default")))
+ #   define CEREAL_USED __attribute__ ((__used__))
+ #endif
++#else
++#   define CEREAL_DLL_EXPORT
++#   define CEREAL_USED
++#endif
+ 
+ namespace cereal
+ {
+diff --git a/include/cereal/external/rapidjson/rapidjson.h b/include/cereal/external/rapidjson/rapidjson.h
+index 3eefe60a..c8be41be 100644
+--- a/include/cereal/external/rapidjson/rapidjson.h
++++ b/include/cereal/external/rapidjson/rapidjson.h
+@@ -115,7 +115,7 @@
+     \see CEREAL_RAPIDJSON_NAMESPACE
+ */
+ #ifndef CEREAL_RAPIDJSON_NAMESPACE
+-#define CEREAL_RAPIDJSON_NAMESPACE rapidjson
++#define CEREAL_RAPIDJSON_NAMESPACE cereal_rapidjson
+ #endif
+ #ifndef CEREAL_RAPIDJSON_NAMESPACE_BEGIN
+ #define CEREAL_RAPIDJSON_NAMESPACE_BEGIN namespace CEREAL_RAPIDJSON_NAMESPACE {

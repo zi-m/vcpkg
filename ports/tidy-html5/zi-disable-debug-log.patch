@@ -1,0 +1,12 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 382c322..9b851c8 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -163,6 +163,7 @@ if ( ENABLE_DEBUG_LOG )
+     add_definitions( -DENABLE_DEBUG_LOG )
+     message(STATUS "*** Debug Logging is enabled.")  
+ else ()
++    add_definitions( -DDISABLE_DEBUG_LOG )
+     message(STATUS "*** Debug Logging is NOT enabled.")  
+ endif ()
+ 

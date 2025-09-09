@@ -12,6 +12,7 @@ vcpkg_from_github(
         fix-pcre2.patch
         gtk3-link-libraries.patch
         sdl2.patch
+        zi-save-load-perspective.patch # https://forums.wxwidgets.org/viewtopic.php?t=21868
 )
 
 # Submodule dependencies

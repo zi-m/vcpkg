@@ -1,0 +1,19 @@
+diff --git a/cmake/protobuf-generate.cmake b/cmake/protobuf-generate.cmake
+index 1956121f5..56a9d2d6d 100644
+--- a/cmake/protobuf-generate.cmake
++++ b/cmake/protobuf-generate.cmake
+@@ -95,6 +95,14 @@ function(protobuf_generate)
+     set(_protobuf_include_path -I ${CMAKE_CURRENT_SOURCE_DIR})
+   endif()
+ 
++  # add support of system headers (e.g google/protobuf/timestamp.proto)
++  get_target_property(Protobuf_INCLUDE_DIRS protobuf::libprotobuf INTERFACE_INCLUDE_DIRECTORIES)
++  get_filename_component(ABS_PATH ${Protobuf_INCLUDE_DIRS} ABSOLUTE)
++  list(FIND _protobuf_include_path ${ABS_PATH} _contains_already)
++  if(${_contains_already} EQUAL -1)
++      list(APPEND _protobuf_include_path -I ${ABS_PATH})
++  endif()
++
+   set(_generated_srcs_all)
+   foreach(_proto ${protobuf_generate_PROTOS})
+     get_filename_component(_abs_file ${_proto} ABSOLUTE)
